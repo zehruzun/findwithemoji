@@ -2,7 +2,7 @@ export async function GET() {
     const emojiGameExamples = [
         {
           emojis: "🧙‍♂️ ⚡ 🪄",
-          answerTR: "harrypotter",
+          answerTR: "harry potter",
           answerEN: "harrypotter",
           answerES: "harrypotter",
           answerDE: "harrypotter",
