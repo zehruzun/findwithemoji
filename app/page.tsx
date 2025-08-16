@@ -46,7 +46,6 @@ export default function Keyboard() {
               {emojiList[0].emojis}
             </p>
           )}
-          <p>cgfhvjbkn</p>
         </div>
 
         {/* Input */}
