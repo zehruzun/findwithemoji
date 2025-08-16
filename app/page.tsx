@@ -28,7 +28,7 @@ export default function Keyboard() {
   // API’den veri çek
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch("http://localhost:3000/api")
+      const res = await fetch("https://findwithemoji.vercel.app/api")
       const data: EmojiItem[] = await res.json()
       setEmojiList(data)
     }
@@ -46,6 +46,7 @@ export default function Keyboard() {
               {emojiList[0].emojis}
             </p>
           )}
+          <p>cgfhvjbkn</p>
         </div>
 
         {/* Input */}
