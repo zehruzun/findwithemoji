@@ -35,7 +35,7 @@ export default function Keyboard() {
     }
 
     setInput("")
-    setTimeout(() => setResultEmoji(""), 10000)
+    setTimeout(() => setResultEmoji(""), 2000)
   }
 
   useEffect(() => {
