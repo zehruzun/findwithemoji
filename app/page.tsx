@@ -43,7 +43,7 @@ export default function Keyboard() {
     setDomain(window.location.host)
 
     async function fetchData() {
-      const res = await fetch("/api") // görece path
+      const res = await fetch("https://findwithemoji-git-main-zehruzuns-projects.vercel.app/api") // görece path
       const data: EmojiItem[] = await res.json()
       setEmojiList(data)
     }
