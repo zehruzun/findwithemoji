@@ -1,50 +1,78 @@
 "use client"
-
 import { useState, useEffect } from "react"
 
-// Klavye tuşları
 const keys = [
   ["Q","W","E","R","T","Y","U","I","O","P"],
   ["A","S","D","F","G","H","J","K","L"],
   ["Z","X","C","V","B","N","M"],
 ]
 
-// API’den gelecek emoji objesi tipi
 interface EmojiItem {
   id: string
   emojis: string
   topic: string
+  answerTR: string
 }
 
 export default function Keyboard() {
   const [input, setInput] = useState("")
   const [emojiList, setEmojiList] = useState<EmojiItem[]>([])
+  const [resultEmoji, setResultEmoji] = useState<string>("") // ✅✅✅ veya ❌❌❌ gösterecek
+  const [domain, setDomain] = useState<string>("") // window.location.host
 
+  // Tuş işlemleri
   const addChar = (char: string) => setInput(prev => prev + char)
   const deleteChar = () => setInput(prev => prev.slice(0, -1))
-  const enterChar = () => alert(`Your answer: ${input}`)
   const addSpace = () => setInput(prev => prev + " ")
 
-  // API’den veri çek
+  // Enter’a basınca kontrol
+  const enterChar = () => {
+    const normalizedInput = input.replace(/\s+/g, "").toLowerCase()
+    const normalizedAnswers = emojiList.map(item => item.answerTR.replace(/\s+/g, "").toLowerCase())
+
+    if (normalizedAnswers.includes(normalizedInput)) {
+      setResultEmoji("✅ ✅ ✅")
+    } else {
+      setResultEmoji("❌ ❌ ❌")
+    }
+
+    setInput("") // input temizle
+
+    // 10 saniye sonra sonucu kaldır
+    setTimeout(() => setResultEmoji(""), 10000)
+  }
+
+  // Client-side domain ve API verisi
   useEffect(() => {
+    setDomain(window.location.host) // sadece client-side'da mevcut
+
     async function fetchData() {
-      const res = await fetch("https://findwithemoji.vercel.app/api")
+      const res = await fetch(`http://${window.location.host}/api`)
       const data: EmojiItem[] = await res.json()
       setEmojiList(data)
     }
     fetchData()
   }, [])
 
+  // Fiziksel klavyeyi dinle
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter") enterChar()
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [input, emojiList])
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="relative w-full max-w-xl p-6 bg-white rounded-2xl shadow-lg flex flex-col gap-4">
-        
+
         {/* Soru Kartı */}
-        <div className="p-4 bg-gray-200 rounded-xl text-center font-semibold text-gray-800">
+        <div className="p-4 bg-gray-200 rounded-xl text-center font-semibold text-gray-800 text-6xl">
           {emojiList.length > 0 && (
-            <p className="text-6xl" key={emojiList[0].id}>
-              {emojiList[0].emojis}
-            </p>
+            <span key={emojiList[0].id}>
+              {resultEmoji || emojiList[0].emojis}
+            </span>
           )}
         </div>
 
