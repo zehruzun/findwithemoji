@@ -1,0 +1,662 @@
+// // "use client";
+// // import React, { useEffect, useState } from "react";
+// // import { gAnswerText } from "../../../../global/global"; // ✅ Global state import
+// // import { Button } from "@/components/ui/button";
+// // import {
+// //   Form,
+// //   FormControl,
+// //   FormDescription,
+// //   FormField,
+// //   FormItem,
+// //   FormLabel,
+// //   FormMessage,
+// // } from "@/components/ui/form";
+// // import { Input } from "@/components/ui/input";
+
+// // import { zodResolver } from "@hookform/resolvers/zod";
+// // import { useForm } from "react-hook-form";
+// // import { z } from "zod";
+// // import Keyboard from "./keyboard";
+
+// // interface Emojies {
+// //   id: string;
+// //   answerTR: string;
+// //   answerEN: string;
+// //   answerSP: string;
+// //   answerDU: string;
+// // }
+
+// // const answerSchema = z.object({
+// //   answer: z.string().optional(),
+// // });
+
+// // type answerValue = z.infer<typeof answerSchema>;
+
+// // const AnswerPage = () => {
+// //   const [emojies, setEmojies] = useState<Emojies[]>([]);
+// //   const fetchEmojies = (answer: answerValue = {}) => {
+// //     let url = "/api/emojies";
+    
+// //     console.log(answer.answer)
+    
+// //     fetch(url)
+// //       .then((res) => res.json())
+// //       .then((data) => {
+// //         setEmojies(data);
+// //       })
+// //       .catch((err) => {
+// //         console.log(err);
+// //       });
+// //   };
+
+// //   useEffect(() => {
+// //     fetchEmojies();
+// //   }, []);
+
+// //   function onSubmit(values: answerValue) {
+// //     fetchEmojies(values);
+// //     console.log(values)
+// //   }
+
+// //   return <div>
+// //             console.log("Enter Key Answer (Global):", gAnswerText);
+// //             </div>;
+// // };
+
+// // export default AnswerPage;
+
+
+
+
+
+// "use client";
+// import React, { useEffect, useState } from "react";
+// import { gAnswerText } from "../../../../global/global";
+// import Keyboard from "./keyboard";
+
+// interface Emojies {
+//   id: string;
+//   answerTR: string;
+//   answerEN: string;
+//   answerSP: string;
+//   answerDU: string;
+// }
+
+
+// const AnswerPage = () => {
+//   const [answer, setAnswer] = useState("");
+//   const [emojies, setEmojies] = useState<Emojies[]>([]);
+
+//   const handleChange = (val: string) => {
+//     setAnswer(val);
+//     gAnswerText.set(val); 
+//   };
+
+//   const fetchEmojies = () => {
+//     let url = "/api/emojies";
+//     fetch(url)
+//       .then((res) => res.json())
+//       .then((data) => {
+//         setEmojies(data);
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//       });
+//   };
+
+//   useEffect(() => {
+//     fetchEmojies();
+//   }, []);
+
+//   const handleSubmit = () => {
+//     console.log("Submitted answer:", answer);
+//     console.log("Global answer:", gAnswerText.get());
+
+//     if(emojies[0].answerTR === gAnswerText.get()){
+//       console.log("cevap doğru")
+//     }
+
+//     else{
+//       console.log("cevap yanlış")
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <div className="flex items-center justify-center w-full">
+//           <input
+//             type="text"
+//             placeholder="Yazınız..."
+//             className="border rounded px-3 sm:px-4 py-2 w-full sm:w-2/3 text-center text-sm sm:text-base"
+//             value={answer}
+//             onChange={(e) => handleChange(e.target.value)}
+//           />
+//         </div>
+//         <br /><br />
+//       <Keyboard value={answer} onChange={handleChange} onSubmit={handleSubmit} />
+//       {/* <p>Global Answer (live): {gAnswerText.get()}</p> */}
+//     </div>
+//   );
+// };
+
+// export default AnswerPage;
+
+
+
+// "use client";
+// import React, { useEffect, useState } from "react";
+// import { gAnswerText } from "../../../../global/global";
+// import Keyboard from "./keyboard";
+
+// interface Emojies {
+//   id: string;
+//   answerTR: string;
+//   answerEN: string;
+//   answerSP: string;
+//   answerDU: string;
+// }
+
+// const AnswerPage = () => {
+//   const [answer, setAnswer] = useState(""); // input için doğru cevabı tutar
+//   const [emojies, setEmojies] = useState<Emojies[]>([]);
+
+//   // Sayfa açıldığında cookie’den kontrol et
+//   useEffect(() => {
+//     async function loadCookie() {
+//       try {
+//         // doğru cevabı yükle
+//         const res = await fetch("/api/cookie/get?name=userAnswer");
+//         const data = await res.json();
+//         if (data.value) {
+//           setAnswer(data.value);
+//           gAnswerText.set(data.value);
+//           console.log("Cookie’den yüklenen doğru cevap:", data.value);
+//         } else {
+//           console.log("Doğru cevap cookie’si bulunamadı");
+//         }
+
+//         // yanlış cevap sayısını kontrol et
+//         const wrongRes = await fetch("/api/cookie/get?name=wrongAnswers");
+//         const wrongData = await wrongRes.json();
+//         console.log(
+//           "Başlangıçtaki yanlış cevap sayısı:",
+//           wrongData.value ?? 0
+//         );
+//       } catch (err) {
+//         console.log("Cookie yüklenirken hata:", err);
+//       }
+//     }
+//     loadCookie();
+//   }, []);
+
+//   // 2 dakikada bir cookie silme (doğru cevabı)
+//   useEffect(() => {
+//     const interval = setInterval(async () => {
+//       try {
+//         await fetch("/api/cookie/remove?name=userAnswer");
+//         console.log("2 dakikada bir doğru cevap cookie’si silindi");
+//         setAnswer("");
+//         gAnswerText.set("");
+//       } catch (err) {
+//         console.log("Cookie silinirken hata:", err);
+//       }
+//     }, 120000);
+
+//     return () => clearInterval(interval);
+//   }, []);
+
+//   const handleChange = (val: string) => {
+//     setAnswer(val);
+//     gAnswerText.set(val);
+//   };
+
+//   const fetchEmojies = () => {
+//     fetch("/api/emojies")
+//       .then((res) => res.json())
+//       .then((data) => setEmojies(data))
+//       .catch((err) => console.log(err));
+//   };
+
+//   useEffect(() => {
+//     fetchEmojies();
+//   }, []);
+
+//   const handleSubmit = async () => {
+//     console.log("Submitted answer:", answer);
+//     console.log("Global answer:", gAnswerText.get());
+
+//     if (
+//       emojies[0].answerTR ===
+//       gAnswerText.get().toLowerCase().replace(/\s+/g, "")
+//     ) {
+//       console.log("✅ Cevap doğru");
+
+//       try {
+//         await fetch("/api/cookie/set", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ name: "userAnswer", value: gAnswerText.get() }),
+//         });
+//         console.log("Doğru cevap cookie’si kaydedildi:", gAnswerText.get());
+//       } catch (err) {
+//         console.log("Cookie kaydedilirken hata:", err);
+//       }
+//     } else {
+//       console.log("❌ Cevap yanlış");
+
+//       try {
+//         // mevcut yanlış cevap sayısını al
+//         const res = await fetch("/api/cookie/get?name=wrongAnswers");
+//         const data = await res.json();
+//         const current = parseInt(data.value ?? "0", 10);
+
+//         // 1 artır
+//         const newValue = current + 1;
+
+//         await fetch("/api/cookie/set", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ name: "wrongAnswers", value: newValue.toString() }),
+//         });
+
+//         // sadece console’da göster
+//         console.log("Yanlış cevap sayısı artırıldı:", newValue);
+//       } catch (err) {
+//         console.log("Yanlış cevap cookie’si güncellenirken hata:", err);
+//       }
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <div className="flex items-center justify-center w-full">
+//         <input
+//           type="text"
+//           placeholder="Yazınız..."
+//           className="border rounded px-3 sm:px-4 py-2 w-full sm:w-2/3 text-center text-sm sm:text-base"
+//           value={answer} // sadece doğru cevabı gösterir
+//           onChange={(e) => handleChange(e.target.value)}
+//         />
+//       </div>
+//       <br />
+//       <br />
+//       <Keyboard
+//         value={answer}
+//         onChange={handleChange}
+//         onSubmit={handleSubmit}
+//       />
+//     </div>
+//   );
+// };
+
+// export default AnswerPage;
+
+
+
+// 
+
+// "use client";
+// import React, { useEffect, useState } from "react";
+// import { gAnswerText, gWrongAnswerCount } from "../../../../global/global";
+// import Keyboard from "./keyboard";
+
+// interface Emojies {
+//   id: string;
+//   answerTR: string;
+//   answerEN: string;
+//   answerSP: string;
+//   answerDU: string;
+// }
+
+// const MAX_WRONG = 4;
+
+// const AnswerPage = () => {
+//   const [valueAnswer, setValueAnswer] = useState(""); // input için doğru cevabı tutar
+//   const [valueWrongAnswer, setValueWrongAnswer] = useState(0); // yanlış cevap sayısı
+//   const [emojies, setEmojies] = useState<Emojies[]>([]);
+//   const [isCorrect, setIsCorrect] = useState(false);
+//   const [isGameOver, setIsGameOver] = useState(false);
+
+//   // Sayfa açıldığında cookie’den kontrol et
+//   useEffect(() => {
+//     async function loadCookie() {
+//       try {
+//         // doğru cevabı yükle
+//         const res = await fetch("/api/cookie/get?name=userAnswer");
+//         const data = await res.json();
+//         if (data.value) {
+//           setValueAnswer(data.value);
+//           gAnswerText.set(data.value);
+//           setIsCorrect(true);
+//           console.log("Cookie’den yüklenen doğru cevap:", data.value);
+//         }
+
+//         // yanlış cevap sayısını yükle
+//         const wrongRes = await fetch("/api/cookie/get?name=wrongAnswers");
+//         const wrongData = await wrongRes.json();
+//         const initialWrong = parseInt(wrongData.value ?? "0", 10);
+//         setValueWrongAnswer(initialWrong);
+//         gWrongAnswerCount.set(initialWrong);
+
+//         if (initialWrong >= MAX_WRONG) setIsGameOver(true);
+
+//         console.log("Başlangıçtaki yanlış cevap sayısı:", initialWrong);
+//       } catch (err) {
+//         console.log("Cookie yüklenirken hata:", err);
+//       }
+//     }
+//     loadCookie();
+//   }, []);
+
+//   // 2 dakikada bir doğru cevabı cookie’den sil
+//   useEffect(() => {
+//     const interval = setInterval(async () => {
+//       try {
+//         await fetch("/api/cookie/remove?name=userAnswer");
+//         console.log("2 dakikada bir doğru cevap cookie’si silindi");
+//         setValueAnswer("");
+//         gAnswerText.set("");
+//       } catch (err) {
+//         console.log("Cookie silinirken hata:", err);
+//       }
+//     }, 120000);
+
+//     return () => clearInterval(interval);
+//   }, []);
+
+//   const handleChange = (val: string) => {
+//     setValueAnswer(val);
+//     gAnswerText.set(val);
+//   };
+
+//   const fetchEmojies = async () => {
+//     try {
+//       const res = await fetch("/api/emojies");
+//       const data = await res.json();
+//       setEmojies(data);
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchEmojies();
+//   }, []);
+
+//   const handleSubmit = async () => {
+//     if (isCorrect || isGameOver) return; // oyun bittiğinde submit engelle
+
+//     const userAnswer = gAnswerText.get().toLowerCase().replace(/\s+/g, "");
+//     const correctAnswer = emojies[0]?.answerTR.toLowerCase().replace(/\s+/g, "") ?? "";
+
+//     if (userAnswer === correctAnswer) {
+//       console.log("✅ Cevap doğru");
+//       setIsCorrect(true);
+
+//       try {
+//         await fetch("/api/cookie/set", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ name: "userAnswer", value: userAnswer }),
+//         });
+//         console.log("Doğru cevap cookie’si kaydedildi:", userAnswer);
+//         setValueAnswer(userAnswer);
+//       } catch (err) {
+//         console.log("Cookie kaydedilirken hata:", err);
+//       }
+//     } else {
+//       console.log("❌ Cevap yanlış");
+
+//       try {
+//         const res = await fetch("/api/cookie/get?name=wrongAnswers");
+//         const data = await res.json();
+//         const current = parseInt(data.value ?? "0", 10);
+//         const newValue = current + 1;
+
+//         await fetch("/api/cookie/set", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ name: "wrongAnswers", value: newValue.toString() }),
+//         });
+
+//         setValueWrongAnswer(newValue);
+//         gWrongAnswerCount.set(newValue);
+
+//         if (newValue >= MAX_WRONG) setIsGameOver(true);
+
+//         console.log("Yanlış cevap sayısı artırıldı:", newValue);
+//       } catch (err) {
+//         console.log("Yanlış cevap cookie’si güncellenirken hata:", err);
+//       }
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <div className="flex items-center justify-center w-full">
+//         {isGameOver ? (
+//           <p className="text-center text-2xl sm:text-3xl font-bold text-red-600">
+//             Maalesef {MAX_WRONG} yanlış yaptınız!
+//           </p>
+//         ) : isCorrect ? (
+//           <p className="text-center text-2xl sm:text-3xl font-bold text-green-600">
+//             Tebrikler! Doğru cevap: {valueAnswer}
+//           </p>
+//         ) : (
+//           <input
+//             type="text"
+//             placeholder="Yazınız..."
+//             className="border rounded px-3 sm:px-4 py-2 w-full sm:w-2/3 text-center text-sm sm:text-base"
+//             value={valueAnswer}
+//             onChange={(e) => handleChange(e.target.value)}
+//           />
+//         )}
+//       </div>
+//       <br />
+//       <br />
+//       {!isCorrect && !isGameOver && (
+//         <Keyboard value={valueAnswer} onChange={handleChange} onSubmit={handleSubmit} />
+//       )}
+//     </div>
+//   );
+// };
+
+// const AnswerPage = () => {
+//   const [currentEmoji, setCurrentEmoji] = useState<Emojies | null>(null);
+//   const [isCorrect, setIsCorrect] = useState(false);
+//   const [remainingMs, setRemainingMs] = useState<number>(0);
+
+//   // Emoji’leri fetch et
+//   const fetchEmojies = async () => {
+//     try {
+//       const res = await fetch("/api/emojies");
+//       const data = await res.json();
+//       console.log("Fetched emojies:", data);
+//       setEmojies(data);
+//     } catch (err) {
+//       console.log("Emoji fetch hatası:", err);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchEmojies();
+//   }, []);
+
+//   // Geçerli emojiyi kontrol et
+//   const checkCurrentEmoji = () => {
+//     const now = new Date();
+//     console.log("Şu anki saat:", now.toLocaleTimeString());
+//     const found = emojies.find((e) => {
+//       const start = new Date(e.startTime);
+//       const end = new Date(e.endTime);
+//       return now >= start && now <= end;
+//     });
+//     if (found?.id !== currentEmoji?.id) {
+//       console.log("Yeni aktif emoji bulundu:", found?.emoji);
+//       setCurrentEmoji(found || null);
+//       setValueAnswer("");
+//       setIsCorrect(false);
+//       gAnswerText.set("");
+
+//       // Cookie sıfırlama
+//       if (found) {
+//         fetch("/api/cookie/set", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ name: "userAnswer", value: "" }),
+//         }).then(() => console.log("Cookie sıfırlandı çünkü yeni emoji geldi"));
+//       }
+//     } else if (!found) {
+//       console.log("Şu an aktif emoji yok");
+//       setCurrentEmoji(null);
+//     }
+//   };
+
+//   useEffect(() => {
+//     if (emojies.length === 0) return;
+//     checkCurrentEmoji();
+//     const interval = setInterval(checkCurrentEmoji, 5000); // 5 sn’de bir kontrol
+//     return () => clearInterval(interval);
+//   }, [emojies, currentEmoji]);
+
+//   // Cookie’nin endTime’a göre silinmesi ve kalan süreyi console’a yazma
+//   useEffect(() => {
+//     if (!currentEmoji) return;
+
+//     const end = new Date(currentEmoji.endTime);
+
+//     const updateRemaining = () => {
+//       const now = new Date();
+//       const remaining = end.getTime() - now.getTime();
+//       setRemainingMs(remaining);
+//       console.log(
+//         `Aktif emoji: ${currentEmoji.emoji}, Cookie silinecek süre: ${Math.max(0, Math.floor(remaining / 1000))} saniye`
+//       );
+//     };
+
+//     updateRemaining(); // hemen bir kere yaz
+
+//     const interval = setInterval(updateRemaining, 1000); // her saniye güncelle
+
+//     if (remainingMs <= 0) {
+//       console.log("EndTime geçti, cookie siliniyor");
+//       setValueAnswer("");
+//       setIsCorrect(false);
+//       gAnswerText.set("");
+//       fetch("/api/cookie/remove?name=userAnswer").then(() => console.log("Cookie silindi"));
+//     }
+
+//     const timeout = setTimeout(() => {
+//       console.log("EndTime geldi, cookie siliniyor");
+//       setValueAnswer("");
+//       setIsCorrect(false);
+//       gAnswerText.set("");
+//       fetch("/api/cookie/remove?name=userAnswer").then(() => console.log("Cookie silindi"));
+//     }, end.getTime() - new Date().getTime());
+
+//     return () => {
+//       clearInterval(interval);
+//       clearTimeout(timeout);
+//     };
+//   }, [currentEmoji]);
+
+//   // Başlangıçta yanlış cevap sayısını yükle
+//   useEffect(() => {
+//     async function loadCookie() {
+//       try {
+//         const res = await fetch("/api/cookie/get?name=wrongAnswers");
+//         const data = await res.json();
+//         const initialWrong = parseInt(data.value ?? "0", 10);
+//         setValueWrongAnswer(initialWrong);
+//         gWrongAnswerCount.set(initialWrong);
+//         console.log("Başlangıçta yanlış cevap sayısı:", initialWrong);
+//         if (initialWrong >= MAX_WRONG) setIsGameOver(true);
+//       } catch (err) {
+//         console.log("Yanlış cevap cookie yükleme hatası:", err);
+//       }
+//     }
+//     loadCookie();
+//   }, []);
+
+//   const handleChange = (val: string) => {
+//     setValueAnswer(val);
+//     gAnswerText.set(val);
+//   };
+
+//   const handleSubmit = async () => {
+//     if (!currentEmoji || isCorrect || isGameOver) return;
+
+//     const userAnswer = gAnswerText.get().toLowerCase().replace(/\s+/g, "");
+//     const correctAnswer = currentEmoji.answerTR.toLowerCase().replace(/\s+/g, "");
+
+//     if (userAnswer === correctAnswer) {
+//       console.log("✅ Cevap doğru:", userAnswer);
+//       setIsCorrect(true);
+//       try {
+//         await fetch("/api/cookie/set", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ name: "userAnswer", value: userAnswer }),
+//         });
+//         console.log("Cookie kaydedildi:", userAnswer);
+//         setValueAnswer(userAnswer);
+//       } catch (err) {
+//         console.log("Cookie kaydedilirken hata:", err);
+//       }
+//     } else {
+//       console.log("❌ Cevap yanlış:", userAnswer);
+//       try {
+//         const res = await fetch("/api/cookie/get?name=wrongAnswers");
+//         const data = await res.json();
+//         const current = parseInt(data.value ?? "0", 10);
+//         const newValue = current + 1;
+//         await fetch("/api/cookie/set", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ name: "wrongAnswers", value: newValue.toString() }),
+//         });
+//         setValueWrongAnswer(newValue);
+//         gWrongAnswerCount.set(newValue);
+//         console.log("Yanlış cevap sayısı artırıldı:", newValue);
+//         if (newValue >= MAX_WRONG) setIsGameOver(true);
+//       } catch (err) {
+//         console.log("Yanlış cevap cookie güncellenirken hata:", err);
+//       }
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <div className="flex items-center justify-center w-full">
+//         {isGameOver ? (
+//           <p className="text-center text-2xl sm:text-3xl font-bold text-red-600">
+//             Maalesef {MAX_WRONG} yanlış yaptınız!
+//           </p>
+//         ) : isCorrect ? (
+//           <p className="text-center text-2xl sm:text-3xl font-bold text-green-600">
+//             Tebrikler! Doğru cevap: {valueAnswer}
+//           </p>
+//         ) : !currentEmoji ? (
+//           <p className="text-center text-xl sm:text-2xl text-gray-500">
+//             Şu an cevap verilecek emoji yok
+//           </p>
+//         ) : (
+//           <input
+//             type="text"
+//             placeholder="Yazınız..."
+//             className="border rounded px-3 sm:px-4 py-2 w-full sm:w-2/3 text-center text-sm sm:text-base"
+//             value={valueAnswer}
+//             onChange={(e) => handleChange(e.target.value)}
+//           />
+//         )}
+//       </div>
+//       <br />
+//       <br />
+//       {!isCorrect && !isGameOver && currentEmoji && (
+//         <Keyboard value={valueAnswer} onChange={handleChange} onSubmit={handleSubmit} />
+//       )}
+//     </div>
+//   );
+// };
+
+// export default AnswerPage;
