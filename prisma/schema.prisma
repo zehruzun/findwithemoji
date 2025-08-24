@@ -17,10 +17,10 @@ datasource db {
 model EmojiList {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   emoji   String   @unique
-  answerTR    String 
-  answerEN String 
-  answerSP String 
-  answerDU String 
+  answerTR    String?
+  answerEN String?
+  answerSP String?
+  answerDU String?
   startTime DateTime?
   endTime DateTime?
 }

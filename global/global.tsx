@@ -40,3 +40,6 @@ class GlobalState<T> {
   // Yeni: Yanlış cevap sayısı için
   export const gWrongAnswerCount = new GlobalState<number>(0);
   
+  export const gAnswer = new GlobalState<string>("");
+
+  export const gIsCorrect = new GlobalState<boolean>(false)

@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import { useEffect, useState } from "react";
 
 const TimePage = () => {
@@ -47,5 +47,3 @@ const TimePage = () => {
 };
 
 export default TimePage;
-
-
