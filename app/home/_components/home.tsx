@@ -1,11 +1,13 @@
 // home/page.tsx
 "use client";
+
 import React from "react";
 import { Card } from "@/components/ui/card";
-import TimePage from "./(routes)/time/page";
-import EmojiesPage from "./(routes)/emojies/page";
-import AnswerPage from "./(routes)/answer/page";
-import HealtPage from "./(routes)/healt/page";
+import TimePage from "../(routes)/time/page";
+import EmojiesPage from "../(routes)/emojies/page";
+import AnswerPage from "../(routes)/answer/page";
+import HealtPage from "../(routes)/healt/page";
+
 
 const HomePage = () => {
 
