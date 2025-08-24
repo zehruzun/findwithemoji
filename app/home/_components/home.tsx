@@ -1,6 +1,6 @@
 // home/page.tsx
 "use client";
-import React, { useState, useRef } from "react";
+import React from "react";
 import { Card } from "@/components/ui/card";
 import TimePage from "./(routes)/time/page";
 import EmojiesPage from "./(routes)/emojies/page";
