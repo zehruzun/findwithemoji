@@ -300,11 +300,45 @@ interface Emojies {
 }
 
 const AnswerPage = () => {
-  // Client-side state
   const [userAnswer, setUserAnswer] = useState<string>("");
   const [currentAnswer, setCurrentAnswer] = useState<Emojies | null>(null);
   const [isAnswer, setIsAnswer] = useState<boolean>(false);
   const [wrongAnswerCount, setWrongAnswerCount] = useState<number>(0);
+
+  // Türkiye saatini almak için helper
+  const getTRDate = () => {
+    const now = new Date();
+    return new Date(
+      now.toLocaleString("en-US", { timeZone: "Europe/Istanbul" })
+    );
+  };
+
+  const todayKey = () => {
+    const d = getTRDate();
+    return d.toISOString().split("T")[0]; // YYYY-MM-DD formatında
+  };
+
+  // localStorage reset kontrol
+  const checkAndResetLocalStorage = () => {
+    const savedDate = window.localStorage.getItem("savedDate");
+
+    if (savedDate !== todayKey()) {
+      window.localStorage.clear();
+      window.localStorage.setItem("savedDate", todayKey());
+      setUserAnswer("");
+      setIsAnswer(false);
+      setWrongAnswerCount(0);
+    }
+  };
+
+  // Component mount olduğunda çalışır
+  useEffect(() => {
+    checkAndResetLocalStorage();
+
+    // Her dakika kontrol et
+    const interval = setInterval(checkAndResetLocalStorage, 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // localStorage’dan başlangıç değerlerini yükle
   useEffect(() => {
@@ -331,7 +365,6 @@ const AnswerPage = () => {
       setCurrentAnswer(active || null);
 
       if (!active) {
-        // Süresi geçmişse localStorage temizle
         window.localStorage.removeItem("userAnswer");
         window.localStorage.removeItem("isAnswer");
         window.localStorage.removeItem("wrongAnswerCount");
@@ -344,10 +377,9 @@ const AnswerPage = () => {
     }
   };
 
-  // İlk fetch ve her 10 saniyede bir güncelle
   useEffect(() => {
     fetchCurrentAnswer();
-    const interval = setInterval(fetchCurrentAnswer, 10000); // 10 saniye
+    const interval = setInterval(fetchCurrentAnswer, 10000);
     return () => clearInterval(interval);
   }, []);
 
@@ -425,17 +457,23 @@ const AnswerPage = () => {
               onKeyDown={handleKeyDown}
               onChange={(e) => setUserAnswer(e.target.value)}
             />
-            <Button type="button" variant="outline" onClick={handleSubmit} className="text-2xl">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleSubmit}
+              className="text-2xl"
+            >
               👍
             </Button>
           </div>
         )
       ) : (
-        <p className="text-green-500 text-3xl">😄 {currentAnswer?.answerEN} 😄</p>
+        <p className="text-green-500 text-3xl">
+          😄 {currentAnswer?.answerEN} 😄
+        </p>
       )}
     </div>
   );
 };
 
 export default AnswerPage;
-
