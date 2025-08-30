@@ -13,7 +13,7 @@ const HealtPage = () => {
 
     updateCount(); // ilk yüklemede hemen çalıştır
 
-    const interval = setInterval(updateCount, 10000); // her 10 saniye güncelle
+    const interval = setInterval(updateCount, 1000); // her 10 saniye güncelle
 
     return () => clearInterval(interval); // unmount olunca temizle
   }, []);
