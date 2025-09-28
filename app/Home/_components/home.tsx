@@ -15,9 +15,13 @@ const HomePage = () => {
     <div className="flex items-center justify-center min-h-screen w-screen bg-gray-50 py-6 px-4">
       <Card className="w-[90%] sm:w-2/5 h-auto sm:h-[80%] p-6 flex flex-col items-center space-y-6">
         <TimePage />
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8148620604752101"
+     crossOrigin="anonymous"></script>
         <EmojiesPage/>
         <AnswerPage/>
         <HealtPage/>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8148620604752101"
+     crossOrigin="anonymous"></script>
       </Card>
     </div>
   );
